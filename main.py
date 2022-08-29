@@ -36,7 +36,7 @@ if check_string("(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]
   connect = answer
 
 thread_count = input("\n 请输入线程数，默认单线程\n → ")or 1
-if check_string("[1-9]\d*", str(thread_count)) is False:
+if check_string("^[1-9]\d*$", str(thread_count)) is False:
   print(" 输入无效，已使用默认值")
   thread_count = 1
 else:
