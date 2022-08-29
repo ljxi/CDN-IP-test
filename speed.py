@@ -82,9 +82,9 @@ def speed(thread,chunk_size):
         with closing(requests.get(url, stream=True)) as response:
             for data in response.iter_content(chunk_size=chunk_size):
                 data_count = data_count + len(data)
-                if data_count/102400/8 >= max:
+                if data_count/1048576 >= max:
                   return 0
-            if data_count/102400/8 >= max:
+            if data_count/1048576 >= max:
                   return 0
       except requests.exceptions.RequestException as e:
          try_count = try_count + 1
