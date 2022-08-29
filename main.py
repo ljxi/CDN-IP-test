@@ -7,7 +7,7 @@ import socket
 from urllib3.util import connection
 import re
 
-default_url = "https://cloud.ljxnet.cn/temp"
+default_url = "https://speed.cloudflare.com/__down?bytes=2000000000"
 
 def check_string(re_exp, str):
     res = re.search(re_exp, str)
