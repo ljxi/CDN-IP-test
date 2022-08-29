@@ -101,21 +101,19 @@ max_speed = 0
 while all_down < max:
     data_count_old = data_count
     time.sleep(refresh)
-    down_speed = (data_count - data_count_old)/102400/refresh
-    down_speed_byte = down_speed/8
-    if down_speed_byte > max_speed:
-      max_speed = down_speed_byte
-    all_down = data_count/102400/8
+    down_speed = (data_count - data_count_old)/1048576/refresh
+    if down_speed > max_speed:
+      max_speed = down_speed
+    all_down = data_count/1048576
     now_time = time.time()
-    avg_speed_byte= data_count/102400/(now_time - start_time)/8
-    avg_speed = data_count/102400/(now_time - start_time)
+    avg_speed = all_down/(now_time - start_time)
     if all_down >= 1024:
       all_down_des = format(all_down/1024, '.2f') + "GB"
     else:
       all_down_des = format(all_down, '.1f') + "MB"
     if down_speed == 0:
-      print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：0 已尝试：%s次     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed_byte,avg_speed,try_count), end=" ")
+      print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：0 已尝试：%s次     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,try_count), end=" ")
     else:
-      print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed_byte,avg_speed,down_speed_byte,down_speed), end=" ")
+      print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,down_speed,down_speed* 8), end=" ")
 
 input("\n 执行完毕 Enter键关闭此窗口")
