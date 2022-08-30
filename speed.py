@@ -17,8 +17,9 @@ def check_string(re_exp, str):
         return False
 def check(sleep_time,c):
   time.sleep(sleep_time)
-  global max
-  max = 0
+  global max_byte
+  max_byte = 0
+
 
 print("\n 连接测速脚本\n")
 url = input(" 请输入测速URL，默认:" + default_url + "\n → ")or default_url
@@ -58,7 +59,7 @@ else:
   max_des = "10s"
   max = 999999999999999
 
-
+max_byte = max * 1048576
 refresh =  1
 
 print("\n URL:%s\n 连接地址:%s\n 线程数:%s\n 目标:%s\n" % (url,connect,thread_count,max_des))
@@ -71,20 +72,20 @@ def patched_create_connection(address, *args, **kwargs):
     return _orig_create_connection((hostname, port), *args, **kwargs)
 connection.create_connection = patched_create_connection
 
-data_count = 0
+data_count = []
 try_count = 0
-def speed(thread,chunk_size):
+def speed(thread_th,chunk_size):
     global data_count
     global try_count
     while True:
-      
       try:
         with closing(requests.get(url, stream=True)) as response:
             for data in response.iter_content(chunk_size=chunk_size):
-                data_count = data_count + len(data)
-                if data_count/1048576 >= max:
+                data_count[thread_th] = data_count[thread_th] + chunk_size
+                if sum(data_count) >= max_byte:
                   return 0
-            if data_count/1048576 >= max:
+            data_count[thread_th] = data_count[thread_th] + len(data) - chunk_size #矫正数值，兼顾性能与精度
+            if data_count[thread_th] >= max_byte:
                   return 0
       except requests.exceptions.RequestException as e:
          try_count = try_count + 1
@@ -93,18 +94,21 @@ def start_new_thread(thread_th):
      thread.start_new_thread(speed, (thread_th,1024))
     except:
       print("Error: unable to start thread")
-for thread_th in range(1,thread_count + 1):
+for thread_th in range(0,thread_count ):
+    data_count.insert(thread_th, 0)
     start_new_thread(thread_th)
 start_time = time.time()
 all_down = 0
 max_speed = 0 
-while all_down < max:
-    data_count_old = data_count
+data_count_sum = 0 
+while data_count_sum < max_byte:
+    data_count_old = data_count_sum
     time.sleep(refresh)
-    down_speed = (data_count - data_count_old)/1048576/refresh
+    data_count_sum = sum(data_count)
+    down_speed = (data_count_sum - data_count_old)/1048576/refresh
     if down_speed > max_speed:
       max_speed = down_speed
-    all_down = data_count/1048576
+    all_down = data_count_sum/1048576
     now_time = time.time()
     avg_speed = all_down/(now_time - start_time)
     if all_down >= 1024:
