@@ -7,7 +7,7 @@ import socket
 from urllib3.util import connection
 import re
 
-default_url = "https://speed.cloudflare.com/__down?bytes=2000000000"
+default_url = "https://speed.cloudflare.com/__down?bytes=104857600"
 
 def check_string(re_exp, str):
     res = re.search(re_exp, str)
@@ -43,7 +43,7 @@ if check_string("^[1-9]\d*$", str(thread_count)) is False:
 else:
   thread_count = int(thread_count)
 
-max_des = input("\n 请输入目标流量(不加MB)或时间(要加s)，默认10s \n → ")or "10s"
+max_des = input("\n 请输入目标流量(不加MB)或时间(要加s)，默认20s \n → ")or "20s"
 if check_string("^[1-9]\d*$", max_des):
     max = int(max_des)
     if max >= 1024:
