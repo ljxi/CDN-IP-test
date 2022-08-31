@@ -9,6 +9,12 @@ import re
 
 default_url = "https://speed.cloudflare.com/__down?bytes=104857600"
 
+
+send_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+        "Connection": "keep-alive",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "zh-CN,zh;q=0.8"}
 def check_string(re_exp, str):
     res = re.search(re_exp, str)
     if res:
@@ -23,7 +29,7 @@ def check(sleep_time,c):
 
 print("\n 连接测速脚本\n")
 url = input(" 请输入测速URL，默认:" + default_url + "\n → ")or default_url
-if check_string("^((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+", url) is False:
+if check_string("^((http|https|HTTP|HTTPS)://.{1,245})$", url) is False:
   print(" 输入无效，已使用默认值")
   url = default_url
 
@@ -32,7 +38,7 @@ domain =  urlparse(url).hostname
 answer =socket.gethostbyname(domain)
 print(" " + domain , "-", answer,"\n")
 connect = input(" 请输入连接地址，默认为DNS解析地址\n → ")or answer
-if check_string("(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)", connect) is False and check_string("^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}|:((:[\da−fA−F]1,4)1,6|:)|:((:[\da−fA−F]1,4)1,6|:)|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)|([\da−fA−F]1,4:)2((:[\da−fA−F]1,4)1,4|:)|([\da−fA−F]1,4:)2((:[\da−fA−F]1,4)1,4|:)|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)|([\da−fA−F]1,4:)4((:[\da−fA−F]1,4)1,2|:)|([\da−fA−F]1,4:)4((:[\da−fA−F]1,4)1,2|:)|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?|([\da−fA−F]1,4:)6:|([\da−fA−F]1,4:)6:",connect) is False:
+if check_string("^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$",connect) is False:
   print(" 输入无效，已使用默认值")
   connect = answer
 
@@ -64,6 +70,7 @@ refresh =  1
 
 print("\n URL:%s\n 连接地址:%s\n 线程数:%s\n 目标:%s\n" % (url,connect,thread_count,max_des))
 
+#重写域名解析
 _orig_create_connection = connection.create_connection
 def patched_create_connection(address, *args, **kwargs):
     """Wrap urllib3's create_connection to resolve the name elsewhere"""
@@ -79,7 +86,7 @@ def speed(thread_th,chunk_size):
     global try_count
     while True:
       try:
-        with closing(requests.get(url, stream=True)) as response:
+        with closing(requests.get(url,headers=send_headers, stream=True)) as response:
             for data in response.iter_content(chunk_size=chunk_size):
                 data_count[thread_th] = data_count[thread_th] + chunk_size
                 if sum(data_count) >= max_byte:
@@ -118,6 +125,8 @@ while data_count_sum < max_byte:
     if down_speed == 0:
       print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：0 已尝试：%s次     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,try_count), end=" ")
     else:
-      print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,down_speed,down_speed* 8), end=" ")
+      print(data_count)
+      print(data_count_sum)
+      #print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,down_speed,down_speed* 8), end=" ")
 
 input("\n 执行完毕 Enter键关闭此窗口")
