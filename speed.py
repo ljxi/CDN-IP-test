@@ -125,8 +125,6 @@ while data_count_sum < max_byte:
     if down_speed == 0:
       print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：0 已尝试：%s次     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,try_count), end=" ")
     else:
-      print(data_count)
-      print(data_count_sum)
-      #print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,down_speed,down_speed* 8), end=" ")
+      print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,down_speed,down_speed* 8), end=" ")
 
 input("\n 执行完毕 Enter键关闭此窗口")
