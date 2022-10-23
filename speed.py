@@ -6,9 +6,11 @@ from urllib.parse import urlparse
 import socket
 from urllib3.util import connection
 import re
+import socks
 
 default_url = "https://speed.cloudflare.com/__down?bytes=104857600"
-
+# socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 7890)
+# socket.socket = socks.socksocket
 
 send_headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
@@ -126,5 +128,5 @@ while data_count_sum < max_byte:
       print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：0 已尝试：%s次     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,try_count), end=" ")
     else:
       print("\r %.0fs 总计%s 最大速度：%.1fM/s %.1fMbps 平均速度：%.1fM/s %.1fMbps 连接速度：%.1fM/s %.1fMbps     " % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8,down_speed,down_speed* 8), end=" ")
-
-input("\n 执行完毕 Enter键关闭此窗口")
+print("\r 执行完毕                                                                                               \n 耗时%.0fs 总计%s\n 最大速度：%.1fM/s %.1fMbps\n 平均速度：%.1fM/s %.1fMbps\n" % (now_time - start_time,all_down_des, max_speed, max_speed *8,avg_speed,avg_speed * 8))
+input(" Enter键关闭此窗口")
