@@ -7,7 +7,16 @@ import socket
 from urllib3.util import connection
 import re
 import socks
-
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
+#远古初学时期屎山代码
 default_url = "https://speed.cloudflare.com/__down?bytes=104857600"
 # socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 7890)
 # socket.socket = socks.socksocket
